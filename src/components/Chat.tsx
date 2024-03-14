@@ -35,8 +35,8 @@ const Chat: React.FC = () => {
 
     // Create an assistant
     const assistant = await openai.beta.assistants.create({
-      name: "Financial Expert",
-      instructions: "You are a health insurance financial advisor in Singapore named Rich. You specialize in helping others understand about their health issues and the best financial plan to choose from contextualized to Singapore. Keep responses factual and do not hallucinate. Keep all responses less than 5 lines long. Ask questions very succinctly. Be more conversational with 1 sentence greetings, more conversational like a chatbot. Always, always introduce yourself as 'Rich, your personal financial advisory assistant' ",
+      name: "Rich General Assistant deploy-poc-v1",
+      instructions: process.env.REACT_APP_RICH_GENERAL_ASST_PROMPT_B,
       tools: [{ type: "code_interpreter" }],
       model: "gpt-4-1106-preview",
     });
