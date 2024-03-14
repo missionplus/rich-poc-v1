@@ -54,10 +54,16 @@ const Chat: React.FC = () => {
     return newMessage;
   };
 
+  // const handleSendMessage = async () => {
+  //   messages.push(createNewMessage(input, true));
+  //   setMessages([...messages]);
+  //   setInput("");
+
   const handleSendMessage = async () => {
-    messages.push(createNewMessage(input, true));
-    setMessages([...messages]);
+    const newMessages = [...messages, createNewMessage(input, true)];
+    setMessages(newMessages);
     setInput("");
+    setIsWaiting(true);
 
     // Send a message to the thread
     await openai.beta.threads.messages.create(thread.id, {
@@ -65,23 +71,62 @@ const Chat: React.FC = () => {
       content: input,
     });
 
+    let assistantResponseBuffer = '';
+
     // Run the assistant
-    const run = await openai.beta.threads.runs.create(thread.id, {
-      assistant_id: assistant.id,
-    });
+    // const run = await openai.beta.threads.runs.create(thread.id, {
+    //   assistant_id: assistant.id,
+    // });
+
+    const run = openai.beta.threads.runs.createAndStream(thread.id, {
+      assistant_id: assistant.id
+    })
+      .on('textCreated', (text) => {
+        // This is where you would handle full text responses that have been completed
+        // For simplicity, we're not doing anything with this event right now
+      })
+      .on('textDelta', (textDelta) => {
+        // This event gives us incremental updates to the assistant's response
+        // We'll use this to update the UI in real-time as the response is being generated
+        assistantResponseBuffer += textDelta.value;
+      })
+      .on('toolCallCreated', (toolCall) => {
+        // Handle the start of a tool call like code execution
+        // Not needed for this simple example, but you can implement something here if necessary
+      })
+      .on('toolCallDelta', (toolCallDelta) => {
+        // Handle updates from tool calls
+        // You would process code execution results and other tool call outputs here
+        // For now, we'll ignore this in our example
+      })
+      .on('error', (error) => {
+        // Handle any errors that occur during the streaming
+        console.error('Streaming error:', error);
+        setIsWaiting(false);
+      })
+      .on('end', () => {
+        // The stream has ended, possibly because the assistant's response is complete
+        // Here we reset the waiting state to allow for new input
+        setIsWaiting(false);
+        // Add the full assistant's response to the messages
+        setMessages(prevMessages => [...prevMessages, createNewMessage(assistantResponseBuffer, false)]); 
+      });
+  
+    // Since we're using streaming, there's no need to poll for a response
+    // The response will come in via the 'textDelta' event and update the UI in real-time
 
     // Create a response
-    let response = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+    //let response = await openai.beta.threads.runs.retrieve(thread.id, run.id);
 
     // Wait for the response to be ready
-    while (response.status === "in_progress" || response.status === "queued") {
-      console.log("waiting...");
-      setIsWaiting(true);
-      await new Promise((resolve) => setTimeout(resolve, 30000));
-      response = await openai.beta.threads.runs.retrieve(thread.id, run.id);
-    }
+    // while (response.status === "in_progress" || response.status === "queued") {
+    //   console.log("waiting...");
+    //   setIsWaiting(true);
+    //   await new Promise((resolve) => setTimeout(resolve, 30000));
+    //   response = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+    // }
 
-    setIsWaiting(false);
+    //setIsWaiting(false);
 
     // Get the messages for the thread
     const messageList = await openai.beta.threads.messages.list(thread.id);
