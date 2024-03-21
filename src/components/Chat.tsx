@@ -1,6 +1,5 @@
 // src/components/Chat.tsx
 import React, { useEffect, useState, useRef } from "react";
-
 import { TextField, Button, Container, Grid, LinearProgress, CircularProgress } from "@mui/material";
 import Message from "./Message";
 import OpenAI from "openai";
