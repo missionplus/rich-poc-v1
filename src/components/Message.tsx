@@ -11,8 +11,8 @@ const Message: React.FC<MessageProps> = ({ message }) => {
     <div style={{ textAlign: message.isUser ? "right" : "left", margin: "8px" }}>
       <div
         style={{
-          color: message.isUser ? "#ffffff" : "#000000",
-          backgroundColor: message.isUser ? "#94c6c8" : "#94c6c8",
+          color: message.isUser ? "#000000" : "#000000",
+          backgroundColor: message.isUser ? "#94c6c8" : "#F5F5F5",
           padding: "15px",
           borderRadius: "8px",
         }}
