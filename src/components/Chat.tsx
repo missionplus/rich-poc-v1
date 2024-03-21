@@ -1,10 +1,12 @@
 // src/components/Chat.tsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+
 import { TextField, Button, Container, Grid, LinearProgress, CircularProgress } from "@mui/material";
 import Message from "./Message";
 import OpenAI from "openai";
 import { MessageDto } from "../models/MessageDto";
 import SendIcon from "@mui/icons-material/Send";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const Chat: React.FC = () => {
   const [isWaiting, setIsWaiting] = useState<boolean>(false);
@@ -13,6 +15,14 @@ const Chat: React.FC = () => {
   const [assistant, setAssistant] = useState<any>(null);
   const [thread, setThread] = useState<any>(null);
   const [openai, setOpenai] = useState<any>(null);
+  const messagesEndRef = useRef<null | HTMLDivElement>(null);
+  // Create a ref for the input element
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // This effect runs whenever messages state changes
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]); // Listening for changes in messages array
 
   useEffect(() => {
     initChatBot();
@@ -27,12 +37,31 @@ const Chat: React.FC = () => {
     ]);
   }, [assistant]);
 
+  useEffect(() => {
+    // After messages update or on component mount, focus the input
+    // Triggers when 'messages' state changes
+    inputRef.current?.focus();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Define a custom theme to change the highlight color
+  const chatBoxTheme = createTheme({
+    palette: {
+      primary: {
+        main: '#7ebcb4', // Replace with the desired highlight color
+      },
+    },
+  });
+
   const initChatBot = async () => {
     const openai = new OpenAI({
       apiKey: process.env.REACT_APP_OPENAI_API_KEY,
       dangerouslyAllowBrowser: true,
     });
-
+  
     // Create an assistant
     const assistant = await openai.beta.assistants.create({
       name: "Rich General Assistant deploy-poc-v1",
@@ -151,6 +180,7 @@ const Chat: React.FC = () => {
   };
 
   return (
+    <ThemeProvider theme={chatBoxTheme}>
     <Container>
       <Grid container direction="column" spacing={2} paddingBottom={2}>
         {messages.map((message, index) => (
@@ -162,6 +192,7 @@ const Chat: React.FC = () => {
       <Grid container direction="row" paddingBottom={5} justifyContent={"space-between"}>
         <Grid item sm={11} xs={9}>
           <TextField
+            inputRef={inputRef} 
             label="Type your message"
             variant="outlined"
             disabled={isWaiting}
@@ -172,14 +203,25 @@ const Chat: React.FC = () => {
           />
           {isWaiting && <LinearProgress color="inherit" />}
         </Grid>
-        <Grid item sm={1} xs={3}>
-          <Button variant="contained" size="large" color="primary" onClick={handleSendMessage} disabled={isWaiting}>
-            {isWaiting && <CircularProgress color="inherit" />}
-            {!isWaiting && <SendIcon fontSize="large" />}
-          </Button>
+        <Grid item sm={1} xs={3} paddingLeft={0.2}>
+        <Button
+          variant="contained"
+          size="large"
+          style={{
+            backgroundColor: '#7ebcb4', // Replace with your desired color code
+            color: '#textColor' // Replace with the text color you want
+          }}
+          onClick={handleSendMessage}
+          disabled={isWaiting}
+        >
+          {isWaiting && <CircularProgress style={{ color: '#abd1bc' }} />}
+          {!isWaiting && <SendIcon style={{ color: '#textColor' }} fontSize="large" />}
+        </Button>
         </Grid>
       </Grid>
+      <div ref={messagesEndRef} /> {/* This is the anchor for scrolling to the bottom */}
     </Container>
+    </ThemeProvider>
   );
 };
 

@@ -12,7 +12,7 @@ const Message: React.FC<MessageProps> = ({ message }) => {
       <div
         style={{
           color: message.isUser ? "#ffffff" : "#000000",
-          backgroundColor: message.isUser ? "#1186fe" : "#eaeaea",
+          backgroundColor: message.isUser ? "#94c6c8" : "#94c6c8",
           padding: "15px",
           borderRadius: "8px",
         }}
