@@ -1,6 +1,21 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 .App {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+  padding-bottom: 150px;
 }
+
+.app-main {
+  flex: 1;
+}
+
 
 .App-logo {
   height: 40vmin;
@@ -17,10 +32,16 @@
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: calc(12px + 2vmin);
+  padding-top: 100px;
+}
+
+.main-content {
+  flex: 1;
+  overflow: auto;
+  padding-bottom: 60px; /* Adjust the value based on the height of your footer */
 }
 
 .App-link {

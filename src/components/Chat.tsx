@@ -192,7 +192,7 @@ const Chat: React.FC = () => {
         <Grid item sm={11} xs={9}>
           <TextField
             inputRef={inputRef} 
-            label="Type your message"
+            label="Enter your message"
             variant="outlined"
             disabled={isWaiting}
             fullWidth
@@ -218,6 +218,7 @@ const Chat: React.FC = () => {
         </Button>
         </Grid>
       </Grid>
+      <br></br>
       <div ref={messagesEndRef} /> {/* This is the anchor for scrolling to the bottom */}
     </Container>
     </ThemeProvider>
