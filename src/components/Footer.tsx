@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
 <p>Should the person choose not to do so, he should consider carefully whether the product is suitable for him. In particular, all relevant documentations pertaining to the product should be read to make an independent assessment of the appropriateness of the transaction.</p>
 <p> It does not constitute an offer, recommendation, solicitation to enter into any transaction. You should seek advice from a licensed or an exempt financial adviser on the suitability of the product for you, taking into account these factors before making a commitment to purchase any product.</p>
 <p>Should the person choose not to do so,(s)he should consider carefully whether the product is suitable for them. The advertisement has not been reviewed by the Monetary Authority of Singapore, or any regulatory authority elsewhere.</p>
-<p>The data you have entered here will be used to train our bot.</p>
+<p>The data you have provided will be used to train me, HelloRich.AI.</p>
     </footer>
   );
 };
